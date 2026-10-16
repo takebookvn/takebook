@@ -207,7 +207,7 @@ fieldset{border:1px solid var(--line);border-radius:var(--r);margin:0 0 16px;pad
 <div class="toast" id="toast" role="status"></div>
 
 <script>
-const SUPABASE_URL = 'https://flanfjggdhgutmkuiji';
+const SUPABASE_URL = 'https://flanfjggdhgutmkuiji.supabase.co';
 const SUPABASE_KEY = 'sb_publishable_iPEHl8Ll2Ap5MpQEQFOHBg__vaeFuVb';
 const _supabase = supabase.createClient(SUPABASE_URL, SUPABASE_KEY);
 
@@ -220,18 +220,18 @@ let n = 0;
 
 function card(b, i) {
   let coverStyle = `background:${b.color || '#19363B'}`;
-  let coverContent = `<span class="t">${b.title}</span><span class="a">Takebook</span>`;
+  let coverContent = `<span class="t">${b.title || b.tile || 'Sách'}</span><span class="a">Takebook</span>`;
   if (b.image_url) {
     coverStyle = `background-image: url('${b.image_url}'); background-size: cover; background-position: center;`;
     coverContent = ``;
   }
-  return `<article class="card"><div class="cover" style="${coverStyle}">${coverContent}</div><span class="tag">Mới</span><h3><a href="#/sach/${i}">${b.title}</a></h3><div class="au">Đang cập nhật</div><div class="row"><span class="price">${fmt(b.price)}</span><button class="btn btn-ghost add" data-i="${i}">Thêm vào giỏ</button></div></article>`;
+  return `<article class="card"><div class="cover" style="${coverStyle}">${coverContent}</div><span class="tag">Mới</span><h3><a href="#/sach/${i}">${b.title || b.tile || 'Sách'}</a></h3><div class="au">Đang cập nhật</div><div class="row"><span class="price">${fmt(b.price)}</span><button class="btn btn-ghost add" data-i="${i}">Thêm vào giỏ</button></div></article>`;
 }
 
 function render(q = "") {
   q = q.trim().toLowerCase();
   const f = (arr, off) => {
-    const h = arr.map((b, i) => [b, i + off]).filter(([b]) => !q || (b.title).toLowerCase().includes(q)).map(([b, i]) => card(b, i)).join("");
+    const h = arr.map((b, i) => [b, i + off]).filter(([b]) => !q || ((b.title||b.tile||'')).toLowerCase().includes(q)).map(([b, i]) => card(b, i)).join("");
     return h || `<p class="empty">Chưa tìm thấy sách phù hợp.</p>`;
   };
   if(document.getElementById('g1') && document.getElementById('g2')) {
@@ -287,7 +287,7 @@ const opt = (v, l, s) => `<option value="${v}"${s ? " selected" : ""}>${l}</opti
 function list() {
   let a = BOOKS.map((b, i) => i).filter(i => {
     const b = BOOKS[i], p = b.price;
-    return (!S.q || (b.title).toLowerCase().includes(S.q.toLowerCase())) && (!S.pr || (S.pr == "1" ? p < 100000 : S.pr == "2" ? p >= 100000 && p <= 150000 : p > 150000));
+    return (!S.q || ((b.title||b.tile||'')).toLowerCase().includes(S.q.toLowerCase())) && (!S.pr || (S.pr == "1" ? p < 100000 : S.pr == "2" ? p >= 100000 && p <= 150000 : p > 150000));
   });
   if (S.sort == "asc") a.sort((x, y) => BOOKS[x].price - BOOKS[y].price);
   if (S.sort == "desc") a.sort((x, y) => BOOKS[y].price - BOOKS[x].price);
@@ -313,12 +313,12 @@ function catalog() {
 function detail(i) {
   const b = BOOKS[i]; if (!b) return catalog();
   let coverStyle = `background:${b.color || '#19363B'}`;
-  let coverContent = `<span class="t">${b.title}</span><span class="a">Takebook</span>`;
+  let coverContent = `<span class="t">${b.title || b.tile || 'Sách'}</span><span class="a">Takebook</span>`;
   if (b.image_url) {
     coverStyle = `background-image: url('${b.image_url}'); background-size: cover; background-position: center;`;
     coverContent = ``;
   }
-  V.innerHTML = bc([["Trang chủ", "#"], ["Danh mục", "#/danh-muc/all"], [b.title]]) + `<div class="det"><div class="dc"><div class="cover" style="${coverStyle}">${coverContent}</div></div><div><h1 class="serif ttl">${b.title}</h1><p class="au">Tác giả đang cập nhật</p><p class="price big">${fmt(b.price)}</p><p class="stk ok">Còn hàng</p><div class="buy"><div class="qty"><button type="button" id="mn" aria-label="Giảm">−</button><input id="qt" type="number" min="1" value="1" aria-label="Số lượng"><button type="button" id="pl" aria-label="Tăng">+</button></div><button class="btn btn-primary" id="adb">Thêm vào giỏ</button></div><h2>Giới thiệu</h2><p>${b.description || 'Chưa có mô tả cho cuốn sách này.'}</p></div></div>`;
+  V.innerHTML = bc([["Trang chủ", "#"], ["Danh mục", "#/danh-muc/all"], [b.title || b.tile || 'Sách']]) + `<div class="det"><div class="dc"><div class="cover" style="${coverStyle}">${coverContent}</div></div><div><h1 class="serif ttl">${b.title || b.tile || 'Sách'}</h1><p class="au">Tác giả đang cập nhật</p><p class="price big">${fmt(b.price)}</p><p class="stk ok">Còn hàng</p><div class="buy"><div class="qty"><button type="button" id="mn" aria-label="Giảm">−</button><input id="qt" type="number" min="1" value="1" aria-label="Số lượng"><button type="button" id="pl" aria-label="Tăng">+</button></div><button class="btn btn-primary" id="adb">Thêm vào giỏ</button></div><h2>Giới thiệu</h2><p>${b.description || 'Chưa có mô tả cho cuốn sách này.'}</p></div></div>`;
   mn.onclick = () => qt.value = Math.max(1, (+qt.value || 1) - 1);
   pl.onclick = () => qt.value = (+qt.value || 0) + 1;
   adb.onclick = () => { const k = Math.max(1, parseInt(qt.value) || 1); if (addCart(i, k)) say("Đã thêm " + k + " cuốn vào giỏ"); };
@@ -326,7 +326,7 @@ function detail(i) {
 
 function cartV() {
   const ks = Object.keys(C);
-  V.innerHTML = bc([["Trang chủ", "#"], ["Giỏ hàng"]]) + `<h1 class="serif ttl">Giỏ hàng</h1>` + (ks.length ? `<div class="cw"><div>${ks.map(i => BOOKS[i] ? `<div class="cr"><div class="cover mini" style="background:${BOOKS[i].color || '#19363B'}"><span class="t">${BOOKS[i].title}</span></div><div><a href="#/sach/${i}"><b>${BOOKS[i].title}</b></a><div class="price">${fmt(BOOKS[i].price)}</div></div><div class="qty"><button type="button" onclick="cq(${i},-1)">−</button><span aria-live="polite">${C[i]}</span><button type="button" onclick="cq(${i},1)">+</button></div><button type="button" class="lnk" onclick="cq(${i},-99)">Xóa</button></div>` : '').join("")}</div><aside class="sum"><h2>Tóm tắt</h2><div class="sr2"><span>Tạm tính</span><b>${fmt(sub())}</b></div><a class="btn btn-primary" href="#/thanh-toan">Tiến hành thanh toán</a></aside></div>` : `<p class="empty">Giỏ hàng đang trống.</p><a class="btn btn-primary" href="#/danh-muc/all">Xem sách</a>`);
+  V.innerHTML = bc([["Trang chủ", "#"], ["Giỏ hàng"]]) + `<h1 class="serif ttl">Giỏ hàng</h1>` + (ks.length ? `<div class="cw"><div>${ks.map(i => BOOKS[i] ? `<div class="cr"><div class="cover mini" style="background:${BOOKS[i].color || '#19363B'}"><span class="t">${BOOKS[i].title || BOOKS[i].tile}</span></div><div><a href="#/sach/${i}"><b>${BOOKS[i].title || BOOKS[i].tile}</b></a><div class="price">${fmt(BOOKS[i].price)}</div></div><div class="qty"><button type="button" onclick="cq(${i},-1)">−</button><span aria-live="polite">${C[i]}</span><button type="button" onclick="cq(${i},1)">+</button></div><button type="button" class="lnk" onclick="cq(${i},-99)">Xóa</button></div>` : '').join("")}</div><aside class="sum"><h2>Tóm tắt</h2><div class="sr2"><span>Tạm tính</span><b>${fmt(sub())}</b></div><a class="btn btn-primary" href="#/thanh-toan">Tiến hành thanh toán</a></aside></div>` : `<p class="empty">Giỏ hàng đang trống.</p><a class="btn btn-primary" href="#/danh-muc/all">Xem sách</a>`);
 }
 
 const fld = (id, l, t, ac) => `<div class="fl"><label for="${id}">${l}</label><input id="${id}" type="${t}" autocomplete="${ac}"><div class="err" id="${id}e" role="alert"></div></div>`;
@@ -344,7 +344,7 @@ function checkout() {
   else if (st == 2) main = `<form id="cf" novalidate><fieldset><legend>Giao hàng</legend>${rad("sh", SH, D.sh)}</fieldset><fieldset><legend>Thanh toán</legend>${rad("py", PY, D.py)}</fieldset><div class="acts"><button class="btn btn-ghost" type="button" id="bk">Quay lại</button><button class="btn btn-primary" type="submit">Xem lại</button></div></form>`;
   else main = `<div class="rv"><div><b>Thông tin nhận hàng</b><p>${D.nm}<br>${D.ph}<br>${D.em}<br>${D.dd}</p></div><button type="button" class="lnk" id="e1">Sửa</button></div><div class="acts"><button class="btn btn-ghost" type="button" id="bk">Quay lại</button><button class="btn btn-primary" type="button" id="place">Đặt hàng</button></div>`;
 
-  V.innerHTML = bc([["Trang chủ", "#"], ["Giỏ hàng", "#/gio-hang"], ["Thanh toán"]]) + `<h1 class="serif ttl">Thanh toán</h1><ol class="stp">${L.map((x, k) => `<li class="${k + 1 < st ? "dn" : ""}"${k + 1 == st ? ' aria-current="step"' : ""}>${x}</li>`).join("")}</ol><div class="cw"><div>${main}</div><aside class="sum"><h2>Đơn hàng</h2>${Object.keys(C).map(i => BOOKS[i] ? `<div class="sr2"><span>${BOOKS[i].title} × ${C[i]}</span><span>${fmt(BOOKS[i].price * C[i])}</span></div>` : '').join("")}<div class="sr2"><span>Tổng cộng</span><b>${fmt(sub())}</b></div></aside></div>`;
+  V.innerHTML = bc([["Trang chủ", "#"], ["Giỏ hàng", "#/gio-hang"], ["Thanh toán"]]) + `<h1 class="serif ttl">Thanh toán</h1><ol class="stp">${L.map((x, k) => `<li class="${k + 1 < st ? "dn" : ""}"${k + 1 == st ? ' aria-current="step"' : ""}>${x}</li>`).join("")}</ol><div class="cw"><div>${main}</div><aside class="sum"><h2>Đơn hàng</h2>${Object.keys(C).map(i => BOOKS[i] ? `<div class="sr2"><span>${BOOKS[i].title || BOOKS[i].tile} × ${C[i]}</span><span>${fmt(BOOKS[i].price * C[i])}</span></div>` : '').join("")}<div class="sr2"><span>Tổng cộng</span><b>${fmt(sub())}</b></div></aside></div>`;
   
   const bk = document.getElementById("bk"); if (bk) bk.onclick = () => go(st - 1);
   const e1 = document.getElementById("e1"); if (e1) e1.onclick = () => go(1);
